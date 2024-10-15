@@ -1,8 +1,4 @@
-// Importação dos módulos Firebase v9 (modular)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js";
-
-// Sua configuração do Firebase (pegue no console do Firebase)
+// Sem usar import/export, configuramos o Firebase diretamente
 const firebaseConfig = {
   apiKey: "AIzaSyCvBpaefejjMNPTN_A-yV5s6F0_okQFJZk",
   authDomain: "capsuladotempo-9d755.firebaseapp.com",
@@ -13,5 +9,7 @@ const firebaseConfig = {
 };
 
 // Inicialize o Firebase
-const app = initializeApp(firebaseConfig);
-const storage = getStorage(app); // Firebase Storage
+firebase.initializeApp(firebaseConfig);
+
+// Obtenha uma referência para o armazenamento
+const storage = firebase.storage();
