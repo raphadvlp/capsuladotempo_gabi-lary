@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gravação de Vídeo</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Firebase App e SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <!-- Configuração do Firebase -->
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gravação de Vídeo</h1>
+      <video id="video" controls></video>
+      <div>
+        <button id="start">Iniciar Gravação</button>
+        <button id="stop" disabled>Parar Gravação</button>
+        <button id="uploadFirebase" disabled>Enviar para Firebase</button>
+      </div>
+      <div id="timer">Tempo de Gravação: 0s</div>
+      <div>Tempo Máximo: 60s</div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
