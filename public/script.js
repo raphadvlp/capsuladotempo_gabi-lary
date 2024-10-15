@@ -72,10 +72,10 @@ function stopRecording() {
 
 // Função para upload para Firebase
 uploadButton.addEventListener("click", () => {
-  const blob = new Blob(recordedChunks, { type: "video/mp4" });
+  const blob = new Blob(recordedChunks, { type: "video/webm" });
 
   // Criando uma referência para o arquivo no Firebase Storage
-  const storageRef = ref(storage, `videos/${Date.now()}.mp4`);
+  const storageRef = ref(storage, `videos/${Date.now()}.webm`);
 
   // Enviando o arquivo para o Firebase Storage
   const uploadTask = uploadBytesResumable(storageRef, blob);
