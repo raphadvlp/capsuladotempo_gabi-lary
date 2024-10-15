@@ -1,9 +1,8 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// Importação dos módulos Firebase v9 (modular)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js";
 
-// Your web app's Firebase configuration
+// Sua configuração do Firebase (pegue no console do Firebase)
 const firebaseConfig = {
   apiKey: "AIzaSyCvBpaefejjMNPTN_A-yV5s6F0_okQFJZk",
   authDomain: "capsuladotempo-9d755.firebaseapp.com",
@@ -13,6 +12,6 @@ const firebaseConfig = {
   appId: "1:869092303974:web:7d5b69c10147a178ddb9a7",
 };
 
-// Initialize Firebase
+// Inicialize o Firebase
 const app = initializeApp(firebaseConfig);
-const storage = firebase.storage();
+const storage = getStorage(app); // Firebase Storage

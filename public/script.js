@@ -1,3 +1,9 @@
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js";
+
 let mediaRecorder;
 let recordedChunks = [];
 let recordingTime = 0;
@@ -69,15 +75,26 @@ uploadButton.addEventListener("click", async () => {
   const blob = new Blob(recordedChunks, { type: "video/webm" });
 
   // Cria uma referência ao local de armazenamento no Firebase
-  const storageRef = firebase.storage().ref();
-  const videoRef = storageRef.child(`videos/${new Date().toISOString()}.webm`);
+  const storageRef = ref(storage, `videos/${new Date().toISOString()}.webm`);
 
-  // Faz o upload do vídeo
-  const snapshot = await videoRef.put(blob);
+  // Faz o upload do vídeo com uploadBytesResumable
+  const uploadTask = uploadBytesResumable(storageRef, blob);
 
-  // Pega a URL de download
-  const downloadURL = await snapshot.ref.getDownloadURL();
-  console.log("Video URL:", downloadURL);
-
-  alert("Upload realizado com sucesso! URL: " + downloadURL);
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      // Progresso do upload (opcional)
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log(`Upload está ${progress}% completo`);
+    },
+    (error) => {
+      console.error("Erro no upload:", error);
+    },
+    async () => {
+      // Upload completo
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      console.log("Video URL:", downloadURL);
+      alert("Upload realizado com sucesso! URL: " + downloadURL);
+    }
+  );
 });
