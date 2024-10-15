@@ -1,98 +1,61 @@
-import {
-  ref,
-  uploadBytesResumable,
-} from "https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js";
-import { storage } from "./firebaseConfig.js"; // Importa o objeto de storage do firebaseConfig.js
-
 let mediaRecorder;
 let recordedChunks = [];
-let recordingTime = 0;
-let recordingInterval;
 
-const video = document.getElementById("video");
+// Obtém a referência dos botões
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
-const uploadButton = document.getElementById("uploadFirebase");
-const timerDisplay = document.getElementById("timer");
 
+// Inicia a gravação
 startButton.addEventListener("click", async () => {
   const stream = await navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true,
   });
-  video.srcObject = stream;
-
   mediaRecorder = new MediaRecorder(stream);
+
   mediaRecorder.ondataavailable = (event) => {
     if (event.data.size > 0) {
       recordedChunks.push(event.data);
     }
   };
 
-  mediaRecorder.onstop = () => {
+  mediaRecorder.onstop = async () => {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
-    const url = URL.createObjectURL(blob);
-    video.srcObject = null;
-    video.src = url;
-    video.controls = true;
-    uploadButton.disabled = false; // Ativa o botão de upload
+    recordedChunks = []; // Limpa os chunks gravados
 
-    // Reinicia os chunks gravados
-    recordedChunks = [];
+    // Verifica o tamanho do blob
+    console.log("Tamanho do vídeo gravado:", blob.size);
+
+    // Envio do vídeo para o Firebase Storage
+    const storageRef = storage.ref(`videos/${Date.now()}.webm`);
+    const uploadTask = storageRef.put(blob);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        console.error("Erro no upload:", error);
+      },
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+          console.log("Arquivo disponível em:", downloadURL);
+        });
+      }
+    );
   };
 
   mediaRecorder.start();
   startButton.disabled = true;
   stopButton.disabled = false;
-
-  // Inicia o contador de tempo
-  recordingTime = 0;
-  timerDisplay.textContent = "Tempo de Gravação: 0s";
-  recordingInterval = setInterval(() => {
-    recordingTime++;
-    timerDisplay.textContent = `Tempo de Gravação: ${recordingTime}s`;
-
-    // Para a gravação após 60 segundos
-    if (recordingTime >= 60) {
-      stopRecording();
-    }
-  }, 1000);
 });
 
-stopButton.addEventListener("click", stopRecording);
-
-function stopRecording() {
+// Para a gravação
+stopButton.addEventListener("click", () => {
   mediaRecorder.stop();
   startButton.disabled = false;
   stopButton.disabled = true;
-
-  // Para o contador de tempo
-  clearInterval(recordingInterval);
-}
-
-// Função para upload para Firebase
-uploadButton.addEventListener("click", () => {
-  const blob = new Blob(recordedChunks, { type: "video/webm" });
-
-  // Criando uma referência para o arquivo no Firebase Storage
-  const storageRef = ref(storage, `videos/${Date.now()}.webm`);
-
-  // Enviando o arquivo para o Firebase Storage
-  const uploadTask = uploadBytesResumable(storageRef, blob);
-
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      // Monitora o progresso do upload
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log("Upload is " + progress + "% done");
-    },
-    (error) => {
-      console.error("Erro no upload:", error);
-    },
-    () => {
-      // Upload completado com sucesso
-      console.log("Upload completo!");
-    }
-  );
 });
