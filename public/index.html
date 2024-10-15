@@ -4,26 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gravação de Vídeo</title>
-    <link rel="stylesheet" href="style.css" />
-
-    <!-- Adicione o Firebase no seu HTML, sem usar a sintaxe de módulos -->
+    <!-- Importa o SDK do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script>
-    <script type="module" src="firebaseConfig.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <!-- Suas configurações do Firebase -->
   </head>
   <body>
-    <div class="container">
-      <h1>Gravação de Vídeo</h1>
-      <video id="video" controls></video>
-      <div>
-        <button id="start">Iniciar Gravação</button>
-        <button id="stop" disabled>Parar Gravação</button>
-        <button id="uploadFirebase" disabled>Enviar para Firebase</button>
-      </div>
-      <div id="timer">Tempo de Gravação: 0s</div>
-      <div>Tempo Máximo: 60s</div>
-    </div>
-
-    <script type="module" src="script.js"></script>
+    <h1>Gravação de Vídeo</h1>
+    <button id="start">Iniciar Gravação</button>
+    <button id="stop" disabled>Parar Gravação</button>
+    <video id="videoPreview" controls autoplay></video>
+    <!-- Adiciona um vídeo para pré-visualização -->
+    <script src="script.js"></script>
   </body>
 </html>

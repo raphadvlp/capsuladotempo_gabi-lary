@@ -1,9 +1,10 @@
 let mediaRecorder;
 let recordedChunks = [];
 
-// Obtém a referência dos botões
+// Obtém a referência dos botões e do vídeo
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
+const videoPreview = document.getElementById("videoPreview");
 
 // Inicia a gravação
 startButton.addEventListener("click", async () => {
@@ -11,6 +12,7 @@ startButton.addEventListener("click", async () => {
     video: true,
     audio: true,
   });
+  videoPreview.srcObject = stream; // Define o stream como fonte do vídeo para pré-visualização
   mediaRecorder = new MediaRecorder(stream);
 
   mediaRecorder.ondataavailable = (event) => {
@@ -22,9 +24,6 @@ startButton.addEventListener("click", async () => {
   mediaRecorder.onstop = async () => {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     recordedChunks = []; // Limpa os chunks gravados
-
-    // Verifica o tamanho do blob
-    console.log("Tamanho do vídeo gravado:", blob.size);
 
     // Envio do vídeo para o Firebase Storage
     const storageRef = storage.ref(`videos/${Date.now()}.webm`);
@@ -43,6 +42,7 @@ startButton.addEventListener("click", async () => {
       () => {
         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
           console.log("Arquivo disponível em:", downloadURL);
+          alert(`Vídeo enviado com sucesso! Acesse: ${downloadURL}`);
         });
       }
     );
