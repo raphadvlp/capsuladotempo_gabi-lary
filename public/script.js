@@ -68,26 +68,25 @@ function stopRecording() {
 uploadButton.addEventListener("click", () => {
   const blob = new Blob(recordedChunks, { type: "video/webm" });
 
-  // Cria uma referência ao local de armazenamento no Firebase
-  const storageRef = storage.ref(`videos/${new Date().toISOString()}.webm`);
+  // Crie uma referência para o arquivo no Firebase Storage
+  const storageRef = storage.ref(`videos/${Date.now()}.webm`);
 
-  // Faz o upload do vídeo
+  // Envie o arquivo para o Firebase Storage
   const uploadTask = storageRef.put(blob);
 
   uploadTask.on(
     "state_changed",
     (snapshot) => {
+      // Você pode exibir o progresso do upload se quiser
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log(`Upload está ${progress}% completo`);
+      console.log("Upload is " + progress + "% done");
     },
     (error) => {
       console.error("Erro no upload:", error);
     },
     () => {
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        console.log("Video URL:", downloadURL);
-        alert("Upload realizado com sucesso! URL: " + downloadURL);
-      });
+      // O upload foi completado
+      console.log("Upload completo!");
     }
   );
 });
